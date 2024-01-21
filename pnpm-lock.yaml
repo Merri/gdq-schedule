@@ -12,8 +12,8 @@ dependencies:
     specifier: 7.0.0
     version: 7.0.0(astro@4.2.1)
   alku:
-    specifier: 1.1.0-rc.26
-    version: 1.1.0-rc.26
+    specifier: 1.1.0-rc.27
+    version: 1.1.0-rc.27
   astro:
     specifier: 4.2.1
     version: 4.2.1(typescript@5.3.3)
@@ -974,8 +974,8 @@ packages:
       - supports-color
     dev: false
 
-  /alku@1.1.0-rc.26:
-    resolution: {integrity: sha512-lh3WoSC3eXE/Dv0QROLp5qVMd3nzdVz5nGOrsNOydy5c55IWx3ID8TCdNltFkMe2nUMd6GMGJ0swwMRDoG/4mg==}
+  /alku@1.1.0-rc.27:
+    resolution: {integrity: sha512-3grdldw9/oI7b8OE7zFbQ9kVPr0IcdFcpZmXjvQNXPwpYR+mYW1z0KA/Ej2D1O6+wgZ3Hfve/3dgEC6/z4TuGA==}
     dev: false
 
   /ansi-align@3.0.1:
