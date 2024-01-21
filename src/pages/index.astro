@@ -23,13 +23,17 @@ const group = events.reduce<Record<string, GDQ_event[]>>((memo, item) => {
 	<main id="main">
 		<h1>Games Done Quick schedules</h1>
 		<p>
-			Here you can find old and new schedules for the{' '}
+			Here you can find past and future schedules for the{' '}
 			<Link href="https://gamesdonequick.com">Games Done Quick events</Link>
 		</p>
 		<p>
-			This site was made as I felt the{' '}
+			This site was made as the{' '}
 			<Link href="https://gamesdonequick.com/schedule/46">new schedule design</Link>{' '}
-			was awful to use, and also heavier and slower than it needed to be.
+			wasn't to my liking due to being sluggish and having cluttered layout. The perf was later improved a bit.
+		</p>
+		<p>
+			This site is still rather barebones, but here are some features: you can link to any run, days are based on
+			event's timezone, improved usability via use of semantic elements.
 		</p>
 		<h2>Events</h2>
 		<dl>
