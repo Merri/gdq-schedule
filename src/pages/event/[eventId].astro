@@ -1,0 +1,266 @@
+---
+import Icon from '../../components/Icon.astro'
+import Layout from '../../layouts/Layout.astro'
+import Link from '../../components/Link.astro'
+import { getId } from '../../lib/getId'
+import { events, getEventSchedule, type GDQ_event } from '../../lib/events'
+
+import { format } from 'date-fns/format'
+import { formatDuration } from 'date-fns/formatDuration'
+import { toDate } from 'date-fns/toDate'
+
+const options = { useAdditionalDayOfYearTokens: true }
+
+if (!Astro.params.eventId || !/^\d+$/.test(Astro.params.eventId)) {
+	return Astro.redirect('/404')
+}
+
+const eventId = parseInt(Astro.params.eventId)
+const schedule = await getEventSchedule(eventId).catch(() => null)
+if (!schedule) return Astro.redirect('/404')
+
+const eventMap = new Map(events)
+const eventTitle = eventMap.get(eventId)?.name ?? schedule.name
+const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
+---
+
+<Layout title={`${eventTitle} | GDQ schedules`}>
+	<h1 data-text="heading6">{eventShortTitle} schedule</h1>
+	<div class="nav">
+		<nav>
+			{
+				schedule.days.map(({ id, date }, index) => (
+					<>
+						{index > 0 && ` `}
+						<a href={`#${id}`}>{format(date, `EEEE'\n'do`)}</a>
+					</>
+				))
+			}
+		</nav>
+	</div>
+	<main id="main">
+		{
+			schedule.days.map(({ date, id, segments }) => (
+				<article>
+					<hgroup>
+						<h2 data-text="heading1" id={id}>
+							Event {format(date, 'EEEE')}
+						</h2>
+						<p>{format(date.slice(0, 19), 'MMMM do, yyyy')}</p>
+					</hgroup>
+					{segments.map((run) => {
+						if (run.type === 'segment') {
+							return run.items.map((item) => (
+								<p style="padding-left: calc(5ch + 16px); padding-left: calc(round(5ch, 1rem) + 16px); margin-block: 1.5rem;">
+									{item.topic}
+								</p>
+							))
+						}
+
+						const date = toDate(run.starttime)
+						const [hour, min] = run.run_time.split(':')
+						const duration = formatDuration({
+							hours: Number(hour) || 0,
+							minutes: Number(min) || 0,
+						}).replace(/\s(\d)/g, (_, $1) => `\n${$1}`)
+
+						const runId = getId(`run ${run.id} ${run.name} ${run.category}`)
+
+						return (
+							<section>
+								<hgroup>
+									<p data-text="14">
+										<a class="run" href={`#${runId}`}>
+											{date.toLocaleTimeString(undefined, { hour: 'numeric', minute: 'numeric' })}
+										</a>
+									</p>
+									<h3 id={runId} data-text="16">
+										{run.name}
+									</h3>
+									<p data-text-color="current">
+										<span>
+											{run.category}
+											{run.video_links.length > 0 && (
+												<>
+													|{' '}
+													<Link
+														data-text="14 external link"
+														data-text-color="positive"
+														href={run.video_links[0].url}
+													>
+														Watch
+													</Link>
+												</>
+											)}
+										</span>
+										{duration ? (
+											<small>
+												(<abbr title="Estimate">Est.</abbr>: {duration})
+											</small>
+										) : null}
+									</p>
+								</hgroup>
+								<div style="margin-top: -1rem; padding-left: calc(5ch + 16px); padding-left: calc(round(5ch, 1rem) + 16px);">
+									{run.runners.map((runner, index) => (
+										<>
+											{index > 0 ? ', ' : ''}
+											{runner.name}
+										</>
+									))}
+								</div>
+							</section>
+						)
+					})}
+				</article>
+			))
+		}
+		{
+			schedule.days.length === 0 ? (
+				<div data-grid="centerItems">
+					<p data-text="24">Schedule has not been released yet.</p>
+					<p class="return">
+						<Icon href="/icons/arrow-left.svg" />
+						<a href="/">Back to GDQ schedules home</a>
+					</p>
+				</div>
+			) : (
+				<p class="return">
+					<Icon href="/icons/arrow-left.svg" />
+					<a href="/">Back to GDQ schedules home</a>
+				</p>
+			)
+		}
+	</main>
+</Layout>
+<style>
+	main {
+		padding-bottom: calc(100vh - 15rem);
+		padding-bottom: calc(100dvh - 15rem);
+	}
+
+	h1,
+	h2 {
+		background: linear-gradient(90deg, #f89a66, #fc6793);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		filter: drop-shadow(0 0 1px black) drop-shadow(1px 1px 0 black);
+	}
+
+	h1 {
+		border-bottom: thin solid;
+		border-bottom-color: color-mix(in oklab, currentColor, transparent 75%);
+		margin: 0;
+		padding: 0.25rem;
+		position: relative;
+		text-align: center;
+		z-index: 2;
+	}
+
+	h2 {
+		scroll-margin-top: 4rem;
+	}
+
+	h3 {
+		border-bottom: thin solid;
+		border-bottom-color: color-mix(in oklab, currentColor, transparent 75%);
+		margin-bottom: 0.25rem;
+		padding-bottom: 0.25rem;
+		scroll-margin-top: 4rem;
+		text-wrap: balance;
+	}
+
+	hgroup:has(> h2) {
+		display: grid;
+		margin-top: 3rem;
+	}
+
+	hgroup:has(> h3) {
+		align-items: center;
+		column-gap: 16px;
+		display: grid;
+		grid-template-areas: 'time title' 'time category';
+		grid-template-columns: 5ch auto;
+		grid-template-columns: round(5ch, 1rem) auto;
+		margin: 1rem 0;
+	}
+
+	hgroup:has(> h3) > p:first-child {
+		text-align: right;
+		grid-area: time;
+	}
+
+	hgroup:has(> h3) > h3 {
+		grid-area: title;
+	}
+
+	hgroup:has(> h3) > h3 ~ p {
+		align-items: center;
+		column-gap: 16px;
+		display: flex;
+		flex-wrap: wrap;
+		grid-area: category;
+		justify-content: space-between;
+	}
+
+	hgroup:has(> h3) > h3 ~ p span {
+		min-width: 12rem;
+	}
+
+	.nav {
+		background: Canvas;
+		color: CanvasText;
+		box-shadow: 0 0 1rem Canvas;
+		isolation: isolate;
+		overflow: hidden;
+		overflow-x: auto;
+		padding-inline: 1.5rem;
+		position: sticky;
+		text-align: center;
+		top: -1px;
+		-webkit-overflow-scrolling: touch;
+		z-index: 1;
+	}
+
+	nav {
+		column-gap: 12px;
+		display: inline-flex;
+		white-space: nowrap;
+	}
+
+	nav a {
+		color: inherit;
+		display: inline-block;
+		padding: 0.25rem;
+		white-space: pre-wrap;
+	}
+
+	:where(nav a, .run):not(:hover, :focus, :active) {
+		text-decoration: none;
+	}
+
+	.run {
+		font-family: var(--mono-font);
+		position: relative;
+	}
+
+	.run::before {
+		bottom: 0;
+		content: '#';
+		display: grid;
+		opacity: 0.25;
+		padding-right: 0.25rem;
+		place-content: center;
+		position: absolute;
+		right: 100%;
+		top: 0;
+	}
+
+	.run:hover::before {
+		opacity: 1;
+		scale: 1.125;
+	}
+
+	.return {
+		margin-top: 48px;
+	}
+</style>

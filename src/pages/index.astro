@@ -1,0 +1,76 @@
+---
+import Layout from '../layouts/Layout.astro'
+import Link from '../components/Link.astro'
+import { type GDQ_event } from '../lib/events'
+
+const events: GDQ_event[] = await fetch(`https://gamesdonequick.com/tracker/api/v2/events/`)
+	.then((data) => data.json())
+	.then((json) => json.results)
+	.catch(() => [])
+
+events.sort((a, b) => a.datetime.localeCompare(b.datetime))
+
+const group = events.reduce<Record<string, GDQ_event[]>>((memo, item) => {
+	const year = item.datetime.slice(0, 4)
+	const array = memo[year] ?? []
+	array.push(item)
+	memo[year] = array
+	return memo
+}, {})
+---
+
+<Layout title="Games Done Quick schedules">
+	<main id="main">
+		<h1>Games Done Quick schedules</h1>
+		<p>
+			Here you can find old and new schedules for the{' '}
+			<Link href="https://gamesdonequick.com">Games Done Quick events</Link>
+		</p>
+		<p>
+			This site was made as I felt the{' '}
+			<Link href="https://gamesdonequick.com/schedule/46">new schedule design</Link>{' '}
+			was awful to use, and also heavier and slower than it needed to be.
+		</p>
+		<h2>Events</h2>
+		<dl>
+			{
+				Object.entries(group)
+					.sort(([a], [b]) => b.localeCompare(a))
+					.map(([year, items]) => (
+						<div class="item">
+							<dt data-text="heading3">{year}</dt>
+							{items.map(({ id, name }) => (
+								<dd>{id >= 17 ? <a href={`/event/${id}`}>{name}</a> : name}</dd>
+							))}
+						</div>
+					))
+			}
+		</dl>
+	</main>
+</Layout>
+
+<style>
+	h1,
+	h2 {
+		background: linear-gradient(90deg, #f89a66, #fc6793);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		filter: drop-shadow(0 0 1px black) drop-shadow(1px 1px 0 black);
+	}
+
+	@media (min-width: 40em) {
+		dl {
+			column-count: 2;
+		}
+	}
+
+	dd {
+		display: list-item;
+		margin-block: 4px;
+	}
+
+	.item {
+		display: inline-block;
+		margin-bottom: 32px;
+	}
+</style>

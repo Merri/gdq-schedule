@@ -1,0 +1,35 @@
+---
+import 'alku'
+
+interface Props {
+	title: string
+}
+
+const { title } = Astro.props
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Games Done Quick schedules" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+<style is:global>
+	@import url(https://fonts.googleapis.com/css2?family=Maven+Pro:wght@400;500;600;700);
+	@import url(https://fonts.googleapis.com/css2?family=Dosis:wght@200;400;600;700);
+	@import url(https://fonts.googleapis.com/css2?family=Miriam+Libre:wght@400;700&display=swap);
+
+	:root {
+		--default-font: Maven Pro, var(--system-stack);
+		--heading-font: Dosis, var(--geometric-humanist-sans-stack);
+		--mono-font: Miriam Libre, var(--mono-font-stack);
+	}
+</style>
