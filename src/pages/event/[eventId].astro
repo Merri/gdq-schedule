@@ -51,7 +51,7 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 					{segments.map((run) => {
 						if (run.type === 'segment') {
 							return run.items.map((item) => (
-								<p style="padding-left: calc(5ch + 16px); padding-left: calc(round(5ch, 1rem) + 16px); margin-block: 1.5rem;">
+								<p style="padding-left: calc(6ch + 16px); padding-left: calc(round(6ch, 1rem) + 16px); margin-block: 1.5rem;">
 									{item.topic}
 								</p>
 							))
@@ -71,7 +71,12 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 								<hgroup>
 									<p data-text="14">
 										<a class="run" href={`#${runId}`}>
-											{date.toLocaleTimeString(undefined, { hour: 'numeric', minute: 'numeric' })}
+											<locale-time-string datetime={run.starttime}>
+												{date.toLocaleTimeString(undefined, {
+													hour: 'numeric',
+													minute: 'numeric',
+												})}
+											</locale-time-string>
 										</a>
 									</p>
 									<h3 id={runId} data-text="16">
@@ -100,7 +105,7 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 										) : null}
 									</p>
 								</hgroup>
-								<div style="margin-top: -1rem; padding-left: calc(5ch + 16px); padding-left: calc(round(5ch, 1rem) + 16px);">
+								<div style="margin-top: -1rem; padding-left: calc(6ch + 16px); padding-left: calc(round(6ch, 1rem) + 16px);">
 									{run.runners.map((runner, index) => (
 										<>
 											{index > 0 ? ', ' : ''}
@@ -131,6 +136,28 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 			)
 		}
 	</main>
+	<script>
+		import { toDate } from 'date-fns/toDate'
+
+		class LocaleTimeString extends HTMLElement {
+			static {
+				customElements.define('locale-time-string', this)
+			}
+
+			constructor() {
+				super()
+
+				const datetime = this.getAttribute('datetime')
+
+				if (typeof datetime === 'string') {
+					this.innerText = toDate(datetime).toLocaleTimeString(undefined, {
+						hour: 'numeric',
+						minute: 'numeric',
+					})
+				}
+			}
+		}
+	</script>
 </Layout>
 <style>
 	main {
@@ -179,8 +206,8 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 		column-gap: 16px;
 		display: grid;
 		grid-template-areas: 'time title' 'time category';
-		grid-template-columns: 5ch auto;
-		grid-template-columns: round(5ch, 1rem) auto;
+		grid-template-columns: 6ch auto;
+		grid-template-columns: round(6ch, 1rem) auto;
 		margin: 1rem 0;
 	}
 
