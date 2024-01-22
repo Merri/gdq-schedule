@@ -90,7 +90,7 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 														minute: 'numeric',
 													})}
 												</noscript>
-												<script is:inline>locale_time_string(document.parentElement)</script>
+												<script is:inline>locale_time_string(document.currentScript)</script>
 											</locale-time-string>
 										</a>
 									</p>
