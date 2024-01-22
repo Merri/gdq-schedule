@@ -38,18 +38,6 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 			}
 		</nav>
 	</div>
-	<script is:inline>
-		function locale_time_string(script) {
-			const el = script.parentElement
-			const datetime = el.getAttribute('datetime')
-			if (typeof datetime === 'string') {
-				el.innerText = new Date(datetime).toLocaleTimeString(undefined, {
-					hour: 'numeric',
-					minute: 'numeric',
-				})
-			}
-		}
-	</script>
 	<main id="main">
 		{
 			schedule.days.map(({ date, id, segments }) => (
@@ -84,13 +72,10 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 									<p data-text="14">
 										<a class="run" href={`#${runId}`}>
 											<locale-time-string datetime={run.starttime}>
-												<noscript>
-													{date.toLocaleTimeString(undefined, {
-														hour: 'numeric',
-														minute: 'numeric',
-													})}
-												</noscript>
-												<script is:inline>locale_time_string(document.currentScript)</script>
+												{date.toLocaleTimeString(undefined, {
+													hour: 'numeric',
+													minute: 'numeric',
+												})}
 											</locale-time-string>
 										</a>
 									</p>
