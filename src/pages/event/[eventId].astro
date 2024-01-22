@@ -43,7 +43,7 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 			const el = script.parentElement
 			const datetime = el.getAttribute('datetime')
 			if (typeof datetime === 'string') {
-				this.innerText = new Date(datetime).toLocaleTimeString(undefined, {
+				el.innerText = new Date(datetime).toLocaleTimeString(undefined, {
 					hour: 'numeric',
 					minute: 'numeric',
 				})
