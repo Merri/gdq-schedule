@@ -3,13 +3,11 @@ import Icon from '../../components/Icon.astro'
 import Layout from '../../layouts/Layout.astro'
 import Link from '../../components/Link.astro'
 import { getId } from '../../lib/getId'
-import { events, getEventSchedule, type GDQ_event } from '../../lib/events'
+import { events, getEventSchedule } from '../../lib/events'
 
 import { format } from 'date-fns/format'
 import { formatDuration } from 'date-fns/formatDuration'
 import { toDate } from 'date-fns/toDate'
-
-const options = { useAdditionalDayOfYearTokens: true }
 
 if (!Astro.params.eventId || !/^\d+$/.test(Astro.params.eventId)) {
 	return Astro.redirect('/404')
@@ -18,6 +16,10 @@ if (!Astro.params.eventId || !/^\d+$/.test(Astro.params.eventId)) {
 const eventId = parseInt(Astro.params.eventId)
 const schedule = await getEventSchedule(eventId).catch(() => null)
 if (!schedule) return Astro.redirect('/404')
+
+function getYouTubeThumbnail(url: string) {
+	return `https://i.ytimg.com/vi/${url.replace('https://youtu.be/', '')}/maxresdefault.jpg`
+}
 
 const eventMap = new Map(events)
 const eventTitle = eventMap.get(eventId)?.name ?? schedule.name
@@ -67,10 +69,10 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 						const runId = getId(`run ${run.id} ${run.name} ${run.category}`)
 
 						return (
-							<section>
+							<section class="card">
 								<hgroup>
 									<p data-text="14">
-										<a class="run" href={`#${runId}`}>
+										<a aria-describedby={runId} class="run" href={`#${runId}`}>
 											<locale-time-string datetime={run.starttime}>
 												{date.toLocaleTimeString(undefined, {
 													hour: 'numeric',
@@ -78,26 +80,19 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 												})}
 											</locale-time-string>
 										</a>
+										<br />
+										{run.video_links.length > 0 && (
+											<Link class="video" data-text="link" href={run.video_links[0].url}>
+												<span data-text="visuallyHidden">Watch {run.name} on YouTube</span>
+												<Icon href="/icons/social/youtube.svg" size={2} />
+											</Link>
+										)}
 									</p>
 									<h3 id={runId} data-text="16">
 										{run.name}
 									</h3>
 									<p data-text-color="current">
-										<span>
-											{run.category}
-											{run.video_links.length > 0 && (
-												<>
-													|{' '}
-													<Link
-														data-text="14 external link"
-														data-text-color="positive"
-														href={run.video_links[0].url}
-													>
-														Watch
-													</Link>
-												</>
-											)}
-										</span>
+										<span>{run.category}</span>
 										{duration ? (
 											<small>
 												(<abbr title="Estimate">Est.</abbr>: {duration})
@@ -105,7 +100,7 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 										) : null}
 									</p>
 								</hgroup>
-								<div style="margin-top: -1rem; padding-left: calc(6ch + 16px); padding-left: calc(round(6ch, 1rem) + 16px);">
+								<div style="padding-left: calc(6ch + 16px); padding-left: calc(round(6ch, 1rem) + 16px);">
 									{run.runners.map((runner, index) => (
 										<>
 											{index > 0 ? ', ' : ''}
@@ -165,6 +160,9 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 		padding-bottom: calc(100dvh - 15rem);
 	}
 
+	article {
+		container-type: inline-size;
+	}
 	h1,
 	h2 {
 		background: linear-gradient(90deg, #f89a66, #fc6793);
@@ -188,10 +186,6 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 	}
 
 	h3 {
-		border-bottom: thin solid;
-		border-bottom-color: color-mix(in oklab, currentColor, transparent 75%);
-		margin-bottom: 0.25rem;
-		padding-bottom: 0.25rem;
 		scroll-margin-top: 4rem;
 		text-wrap: balance;
 	}
@@ -202,13 +196,13 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 	}
 
 	hgroup:has(> h3) {
-		align-items: center;
 		column-gap: 16px;
 		display: grid;
 		grid-template-areas: 'time title' 'time category';
 		grid-template-columns: 6ch auto;
 		grid-template-columns: round(6ch, 1rem) auto;
-		margin: 1rem 0;
+		grid-template-rows: auto 1fr;
+		margin-bottom: 0.25rem;
 	}
 
 	hgroup:has(> h3) > p:first-child {
@@ -221,7 +215,6 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 	}
 
 	hgroup:has(> h3) > h3 ~ p {
-		align-items: center;
 		column-gap: 16px;
 		display: flex;
 		flex-wrap: wrap;
@@ -289,5 +282,35 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 
 	.return {
 		margin-top: 48px;
+	}
+
+	.card {
+		background: var(--muted-04);
+		background-clip: padding-box;
+		border: thin solid var(--shadow-50);
+		border-radius: 16px;
+		margin-block: 8px;
+		padding: 16px;
+	}
+
+	@container (width < 25rem) {
+		.card {
+			margin-inline: -12px;
+			padding-inline: 12px;
+		}
+	}
+
+	.video {
+		display: inline-grid;
+	}
+
+	.video > :global(svg) {
+		height: auto;
+		width: 3.5ch;
+		width: round(3.5ch, 0.25rem);
+	}
+
+	.video:not(:hover, :focus, :active) {
+		opacity: 0.5;
 	}
 </style>
