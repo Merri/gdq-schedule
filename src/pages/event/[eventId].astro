@@ -92,22 +92,79 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 										{run.name}
 									</h3>
 									<p data-text-color="current">
-										<span>{run.category}</span>
-										{duration ? (
-											<small>
-												(<abbr title="Estimate">Est.</abbr>: {duration})
+										<span>{run.category}&ensp;</span>
+										{run.run_time.includes(':') ? (
+											<small data-box="inline" data-text-color="muted">
+												Estimate {run.run_time}
 											</small>
 										) : null}
 									</p>
 								</hgroup>
-								<div style="padding-left: calc(6ch + 16px); padding-left: calc(round(6ch, 1rem) + 16px);">
-									{run.runners.map((runner, index) => (
-										<>
-											{index > 0 ? ', ' : ''}
-											{runner.name}
-										</>
-									))}
-								</div>
+								<dl class="people" data-grid="auto" style="--grid-auto: 15rem">
+									<div>
+										<dt data-text="14">By</dt>
+										<dd data-box="row" data-text="14" style="row-gap: 8px;">
+											{run.runners.map(({ name, pronouns }) => (
+												<span>
+													{name}
+													<br />
+													<small data-text-color="muted">
+														{pronouns
+															.split(',')[0]
+															.toLowerCase()
+															.replace(/\s*\/\s*/g, ' / ')}
+													</small>
+												</span>
+											))}
+										</dd>
+									</div>
+									{run.commentators.length > 0 ? (
+										<div>
+											<dt data-text="14">
+												<Icon href="/icons/speaker-2.svg" title="Commentators" />
+												<span data-text="visuallyHidden">Commentators</span>
+											</dt>
+											<dd data-box="row" data-text="14" style="row-gap: 8px;">
+												{run.commentators.map(({ name, pronouns }) => (
+													<span>
+														{name}
+														<br />
+														<small data-text-color="muted">
+															{pronouns
+																.split(',')[0]
+																.toLowerCase()
+																.replace(/\s*\/\s*/g, ' / ')}
+														</small>
+													</span>
+												))}
+											</dd>
+										</div>
+									) : (
+										<div />
+									)}
+									{run.hosts.length > 0 && (
+										<div>
+											<dt data-text="14">
+												<Icon href="/icons/microphone.svg" title="Hosts" />
+												<span data-text="visuallyHidden">Hosts</span>
+											</dt>
+											<dd data-box="row" data-text="14" style="row-gap: 8px;">
+												{run.hosts.map(({ name, pronouns }) => (
+													<span>
+														{name}
+														<br />
+														<small data-text-color="muted">
+															{pronouns
+																.split(',')[0]
+																.toLowerCase()
+																.replace(/\s*\/\s*/g, ' / ')}
+														</small>
+													</span>
+												))}
+											</dd>
+										</div>
+									)}
+								</dl>
 							</section>
 						)
 					})}
@@ -156,8 +213,8 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 </Layout>
 <style>
 	main {
-		padding-bottom: calc(100vh - 15rem);
-		padding-bottom: calc(100dvh - 15rem);
+		padding-bottom: calc(75vh - 15rem);
+		padding-bottom: calc(75dvh - 15rem);
 	}
 
 	article {
@@ -215,11 +272,7 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 	}
 
 	hgroup:has(> h3) > h3 ~ p {
-		column-gap: 16px;
-		display: flex;
-		flex-wrap: wrap;
 		grid-area: category;
-		justify-content: space-between;
 	}
 
 	hgroup:has(> h3) > h3 ~ p span {
@@ -286,8 +339,7 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 
 	.card {
 		background: var(--muted-04);
-		background-clip: padding-box;
-		border: thin solid var(--shadow-50);
+		border: thin solid var(--muted-10);
 		border-radius: 16px;
 		margin-block: 8px;
 		padding: 16px;
@@ -312,5 +364,24 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 
 	.video:not(:hover, :focus, :active) {
 		opacity: 0.5;
+	}
+
+	.people > div {
+		display: grid;
+		gap: 4px 16px;
+		grid-template-columns: 6ch auto;
+		grid-template-columns: round(6ch, 1rem) auto;
+		line-height: 1.25;
+		margin: 0;
+	}
+
+	.people > div > dt {
+		text-align: right;
+	}
+
+	.people > div > dt > :global(svg) {
+		height: auto;
+		width: 2ch;
+		width: round(2ch, 0.25rem);
 	}
 </style>
