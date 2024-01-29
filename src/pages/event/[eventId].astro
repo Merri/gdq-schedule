@@ -100,10 +100,10 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 										) : null}
 									</p>
 								</hgroup>
-								<dl class="people" data-grid="auto" style="--grid-auto: 15rem">
+								<dl class="people" data-grid="auto" style="--grid-auto: 15rem; row-gap: 1ch;">
 									<div>
 										<dt data-text="14">By</dt>
-										<dd data-box="row" data-text="14" style="row-gap: 8px;">
+										<dd data-box="row" data-text="14" style="row-gap: 0.5ch;">
 											{run.runners.map(({ name, pronouns }) => (
 												<span>
 													{name}
@@ -124,7 +124,7 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 												<Icon href="/icons/speaker-2.svg" title="Commentators" />
 												<span data-text="visuallyHidden">Commentators</span>
 											</dt>
-											<dd data-box="row" data-text="14" style="row-gap: 8px;">
+											<dd data-box="row" data-text="14" style="row-gap: 0.5ch;">
 												{run.commentators.map(({ name, pronouns }) => (
 													<span>
 														{name}
@@ -148,7 +148,7 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 												<Icon href="/icons/microphone.svg" title="Hosts" />
 												<span data-text="visuallyHidden">Hosts</span>
 											</dt>
-											<dd data-box="row" data-text="14" style="row-gap: 8px;">
+											<dd data-box="row" data-text="14" style="row-gap: 0.5ch;">
 												{run.hosts.map(({ name, pronouns }) => (
 													<span>
 														{name}
@@ -281,7 +281,7 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 	}
 
 	hgroup:has(> h3) > h3 ~ p:last-child {
-		margin-bottom: 0.5rem;
+		margin-bottom: 8px;
 	}
 
 	.nav {
@@ -374,7 +374,7 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 
 	.people {
 		background: var(--shadow-10);
-		box-shadow: 0 0.5rem 0 1rem var(--shadow-10);
+		box-shadow: 0 0.5rem 0 16px var(--shadow-10);
 		margin: 0;
 	}
 
