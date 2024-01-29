@@ -223,9 +223,10 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 	h1,
 	h2 {
 		background: linear-gradient(90deg, #f89a66, #fc6793);
+		background: linear-gradient(90deg, color-mix(in oklab, #f89a66, currentColor 10%), color-mix(in oklab, #fc6793, currentColor 30%));
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
-		filter: drop-shadow(0 0 1px black) drop-shadow(1px 1px 0 black);
+		filter: drop-shadow(0 0 1px var(--shadow-70)) saturate(1.2);
 	}
 
 	h1 {
@@ -277,6 +278,10 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 
 	hgroup:has(> h3) > h3 ~ p span {
 		min-width: 12rem;
+	}
+
+	hgroup:has(> h3) > h3 ~ p:last-child {
+		margin-bottom: 0.5rem;
 	}
 
 	.nav {
@@ -341,6 +346,7 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 		background: var(--muted-04);
 		border: thin solid var(--muted-10);
 		border-radius: 16px;
+		contain: paint;
 		margin-block: 8px;
 		padding: 16px;
 	}
@@ -366,13 +372,18 @@ const eventShortTitle = eventMap.get(eventId)?.shortName ?? schedule.short
 		opacity: 0.5;
 	}
 
+	.people {
+		background: var(--shadow-10);
+		box-shadow: 0 0.5rem 0 1rem var(--shadow-10);
+		margin: 0;
+	}
+
 	.people > div {
 		display: grid;
 		gap: 4px 16px;
 		grid-template-columns: 6ch auto;
 		grid-template-columns: round(6ch, 1rem) auto;
 		line-height: 1.25;
-		margin: 0;
 	}
 
 	.people > div > dt {
